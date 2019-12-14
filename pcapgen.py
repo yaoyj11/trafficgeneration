@@ -1,5 +1,6 @@
 import sys
 import binascii
+import socket
 
 #Global header for pcap 2.4
 pcap_global_header =   ('D4 C3 B2 A1'   
@@ -139,9 +140,15 @@ def ip_checksum(iph):
 #        print 'usage: pcapgen.py output_file'
 #        exit(0)
 #
-#msg="wo shi zhong guo ren"
-#pcapfile=sys.argv[1]
-#pfile=generatepcap(pcapfile)
-#AppendTcpPacket(msg,srcip,srcport,dstip,dstport,pfile)  
-#AppendTcpPacket("hahaha",srcip,srcport,dstip,dstport,pfile)  
-#pfile.close()
+msg="hello world"
+pcapfile=sys.argv[1]
+SRC="152.3.137.55"
+DST="128.194.6.146"
+srcip=binascii.hexlify(socket.inet_aton(SRC)).upper()
+dstip=binascii.hexlify(socket.inet_aton(DST)).upper()
+dstport=8080
+srcport=4400
+pfile=generatepcap(pcapfile)
+AppendTcpPacket(msg,srcip,srcport,dstip,dstport,pfile)  
+AppendTcpPacket("hahaha",srcip,srcport,dstip,dstport,pfile)  
+pfile.close()
