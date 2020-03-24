@@ -1,4 +1,5 @@
 import sys
+import random
 import binascii
 import socket
 
@@ -17,8 +18,8 @@ pcap_packet_header =   ('AA 77 9F 47'
                         'XX XX XX XX'   #Frame Size (little endian) 
                         'YY YY YY YY')  #Frame Size (little endian)
 
-eth_header =   ('00 00 00 00 00 00'     #Source Mac    
-                '00 00 00 00 00 00'     #Dest Mac  
+eth_header =   ('34 17 EB BF 3A B8'     #Source Mac    
+                '00 50 56 87 56 51'     #Dest Mac  
                 '08 00')                #Protocol (0x0800 = IP)
 
 ip_headerudp =    ('45'                    #IP version and header length (multiples of 4 bytes)   
@@ -136,19 +137,58 @@ def ip_checksum(iph):
 """ End of functions, execution starts here: """
 """------------------------------------------"""
 
-#if len(sys.argv) < 2:
-#        print 'usage: pcapgen.py output_file'
-#        exit(0)
-#
-msg="hello world"
-pcapfile=sys.argv[1]
-SRC="152.3.137.55"
-DST="128.194.6.146"
-srcip=binascii.hexlify(socket.inet_aton(SRC)).upper()
-dstip=binascii.hexlify(socket.inet_aton(DST)).upper()
-dstport=8080
-srcport=4400
-pfile=generatepcap(pcapfile)
-AppendTcpPacket(msg,srcip,srcport,dstip,dstport,pfile)  
-AppendTcpPacket("hahaha",srcip,srcport,dstip,dstport,pfile)  
-pfile.close()
+
+
+def pcap1():
+    msg="hello world"
+    pcapfile=sys.argv[1]
+    SRC="152.3.137.55"
+    DST="128.194.6.146"
+    srcip=binascii.hexlify(socket.inet_aton(SRC)).upper()
+    dstip=binascii.hexlify(socket.inet_aton(DST)).upper()
+    dstport=8080
+    srcport=4400
+    pfile=generatepcap(pcapfile)
+    AppendTcpPacket(msg,srcip,srcport,dstip,dstport,pfile)  
+    AppendTcpPacket("hahaha",srcip,srcport,dstip,dstport,pfile)  
+    pfile.close()
+
+
+def pcap2():
+    msg="hello"
+    pcapfile=sys.argv[1]
+    SRC="1.{}.{}.1"
+    DST="2.{}.{}.1"
+    count = 0
+    pfile=generatepcap(pcapfile)
+    num1 = 10000
+    num2 = 10000
+    print(num1*num2)
+    for i in range(num1):
+        for j in range(num2):
+            src2 = random.randint(1,254)
+            src3 = random.randint(1,254)
+            dst2 = random.randint(1,254)
+            dst3 = random.randint(1,254)
+            srcip=binascii.hexlify(socket.inet_aton(SRC.format(src2,src3))).upper()
+            dstip=binascii.hexlify(socket.inet_aton(DST.format(dst2,dst3))).upper()
+            dstport=8080
+            srcport=4400
+            AppendTcpPacket(msg,srcip,srcport,dstip,dstport,pfile)
+            count += 1
+            if count%100000 == 0:
+                print(count)
+    #for src2 in range(1,255):
+    #    for src3 in range(1, 255):
+    #        print("{} {}".format(src2,src3))
+    #        for dst2 in range(1, 255):
+    #            for dst3 in range(1, 255):
+    pfile.close()
+    print(count)
+
+
+if __name__=="__main__":
+    if len(sys.argv) < 2:
+            print 'usage: pcapgen.py output_file'
+            exit(0)
+    pcap2()
